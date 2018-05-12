@@ -85,26 +85,20 @@ def valid_actions(grid, current_node):
     # NOTE: In a perfect grid diagonal movements can also be removed when straigt movements are invalid
     if x - 1 < 0 or grid[x - 1, y] == 1:
         valid_actions.remove(Action.NORTH)
-        valid_actions.remove(Action.NORTHEAST)
-        valid_actions.remove(Action.NORTHWEST)
     if x + 1 > n or grid[x + 1, y] == 1:
         valid_actions.remove(Action.SOUTH)
-        valid_actions.remove(Action.SOUTHEAST)
-        valid_actions.remove(Action.SOUTHWEST)
     if y - 1 < 0 or grid[x, y - 1] == 1:
         valid_actions.remove(Action.WEST)
-        try:
-            valid_actions.remove(Action.NORTHWEST)
-            valid_actions.remove(Action.SOUTHWEST)
-        except:
-            pass
     if y + 1 > m or grid[x, y + 1] == 1:
         valid_actions.remove(Action.EAST)
-        try:
-            valid_actions.remove(Action.NORTHEAST)
-            valid_actions.remove(Action.SOUTHEAST)
-        except:
-            pass
+    if x - 1 < 0 or y + 1 > m or grid[x - 1, y + 1] == 1:
+        valid_actions.remove(Action.NORTHEAST)
+    if x + 1 > n or y + 1 > m or grid[x + 1, y + 1] == 1:
+        valid_actions.remove(Action.SOUTHEAST)
+    if x - 1 < 0 or y - 1 < 0 or grid[x - 1, y - 1] == 1:
+        valid_actions.remove(Action.NORTHWEST)
+    if x + 1 > n or y - 1 < m or grid[x + 1, y - 1] == 1:
+        valid_actions.remove(Action.SOUTHWEST)
 
     return valid_actions
 
@@ -240,4 +234,4 @@ if __name__ == '__main__':
     path = prune_path(path)
     print(path)
 
-    plot_plan(grid, grid_start, grid_goal, path, north_offset, east_offset)
+    plot_plan(grid, grid_start, grid_goal, path)
