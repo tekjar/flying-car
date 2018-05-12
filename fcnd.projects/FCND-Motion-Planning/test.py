@@ -157,6 +157,7 @@ def a_star(grid, h, start, goal):
         print('**********************')
         print('Failed to find a path!')
         print('**********************')
+        exit(1)
     return path[::-1], path_cost
 
 
@@ -164,21 +165,44 @@ def heuristic(position, goal_position):
     return np.linalg.norm(np.array(position) - np.array(goal_position))
 
 
-def plot_grid(grid, start, goal, path):
+def plot_plan(grid, start, goal, path):
     plt.imshow(grid, cmap='Greys', origin='lower')
     plt.ylabel('NORTH')
     plt.xlabel('EAST')
 
-    #plt.plot([start[0] + north_offset, start[1] + east_offset], linestyle='-', marker='o', color='b')
-    #plt.plot([goal[0] + north_offset, goal[1] + east_offset], linestyle='-', marker='o', color='b')
     plt.plot(start[1], start[0], marker='x', markersize=5, color="red")
     plt.plot(goal[1], goal[0], marker='x', markersize=5, color="red")
+
+    for p in path:
+        plt.plot(p[1], p[0], marker='o', markersize=5, color="blue")
 
     path_pairs = zip(path[:-1], path[1:])
     for (n1, n2) in path_pairs:
         plt.plot([n1[1], n2[1]], [n1[0], n2[0]], 'green')
 
     plt.show()
+
+def collinearity_check(p1, p2, p3, epsilon=1e-6):
+    points = np.array([[p1[0], p1[1], 1.], [p2[0], p2[1], 1.], [p3[0], p3[1], 1.]])
+    det = np.linalg.det(points)
+    return abs(det) < epsilon
+
+def prune_path(path):
+    pruned_path = [p for p in path]
+
+    i = 0
+    while i < len(pruned_path) - 2:
+        p1 = pruned_path[i]
+        p2 = pruned_path[i + 1]
+        p3 = pruned_path[i + 2]
+
+        # remove the middle point if colinearity succeeds or else
+        # move to next point
+        if collinearity_check(p1, p2, p3):
+            pruned_path.remove(pruned_path[i + 1])
+        else:
+            i += 1
+    return pruned_path
 
 if __name__ == '__main__':
     TARGET_ALTITUDE = 5
@@ -213,7 +237,7 @@ if __name__ == '__main__':
     print('grid start = {}, grid goal = {}'.format(grid_start, grid_goal))
 
     path, _ = a_star(grid, heuristic, grid_start, grid_goal)
-
+    path = prune_path(path)
     print(path)
 
-    plot_grid(grid, grid_start, grid_goal, path)
+    plot_plan(grid, grid_start, grid_goal, path)
