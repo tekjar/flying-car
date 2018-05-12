@@ -157,7 +157,7 @@ def a_star(grid, h, start, goal):
         print('**********************')
         print('Failed to find a path!')
         print('**********************')
-        exit(1)
+        #exit(1)
     return path[::-1], path_cost
 
 
@@ -240,4 +240,4 @@ if __name__ == '__main__':
     path = prune_path(path)
     print(path)
 
-    plot_plan(grid, grid_start, grid_goal, path)
+    plot_plan(grid, grid_start, grid_goal, path, north_offset, east_offset)

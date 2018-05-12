@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 import numpy as np
 import csv
-from planning_utils import a_star, heuristic, create_grid
+from pathplan import a_star, heuristic, create_grid, prune_path, plot_plan
 from udacidrone import Drone
 from udacidrone.connection import MavlinkConnection
 from udacidrone.messaging import MsgID
@@ -159,37 +159,27 @@ class MotionPlanning(Drone):
         # TODO: convert to current local position using global_to_local()
         current_local_position = global_to_local(current_global_position, self.global_home)
 
-        # vanilla global home = [-122.3974533, 37.7924804, 0]
-        #         global position = [-122.3973387, 37.7925735, 0.14]
-        #         local position = [10.36294556, 10.17260838, -0.14170027]
         print('* global home {0}, position {1} , local position {2}'.format(self.global_home, self.global_position,
                                                                          self.local_position))
-        print('# global home {0}, position {1} , local position {2}'.format(self.global_home, current_global_position,
-                                                                          current_local_position))
         # Read in obstacle map
         data = np.loadtxt('colliders.csv', delimiter=',', dtype='Float64', skiprows=2)
         
         # Define a grid for a particular altitude and safety margin around obstacles
         grid, north_offset, east_offset = create_grid(data, TARGET_ALTITUDE, SAFETY_DISTANCE)
-
         print("North offset = {0}, east offset = {1}".format(north_offset, east_offset))
 
-        # Define starting point on the grid (this is just grid center)
-        grid_start = (-north_offset, -east_offset)
         # TODO: convert start position to current position rather than map center
-        start_local_position = global_to_local((-122.397785, 37.792533, 25.0), self.global_home)
-        goal_local_position = global_to_local((-122.395606, 37.793872, 25.0), self.global_home)
+        grid_start = (int(current_local_position[0] - north_offset), int(current_local_position[1] - east_offset))
 
-        grid_start = (int(start_local_position[0]), int(start_local_position[1]))
+        # Set your goals global position here
+        goal_global_position = (-122.397450, 37.792480, TARGET_ALTITUDE) # (longitude, latitude)
+        goal_local_position = global_to_local(goal_global_position, self.global_home)
 
         # Set goal as some arbitrary position on the grid
-        grid_goal = (-north_offset + 10, -east_offset + 10)
-        grid_goal = (int(goal_local_position[0]), int(goal_local_position[1]))
+        grid_goal = (int(goal_local_position[0] - north_offset), int(goal_local_position[1] - east_offset))
         # TODO: adapt to set goal as latitude / longitude position and convert
 
         print('Local Start and Goal: ', grid_start, grid_goal)
-        self.plot_grid(grid, grid_start, grid_goal, north_offset, east_offset)
-        exit(1)
 
         # Run A* to find a path from start to goal
         # TODO: add diagonal motions with a cost of sqrt(2) to your A* implementation
@@ -198,9 +188,15 @@ class MotionPlanning(Drone):
         path, _ = a_star(grid, heuristic, grid_start, grid_goal)
         # TODO: prune path to minimize number of waypoints
         # TODO (if you're feeling ambitious): Try a different approach altogether!
+        path = prune_path(path)
+        print(path)
+
+        # NOTE: The zigzag path is because of pruning using colinearity. Bresenhams can avoid this
+        plot_plan(grid, grid_start, grid_goal, path)
 
         # Convert path to waypoints
         waypoints = [[p[0] + north_offset, p[1] + east_offset, TARGET_ALTITUDE, 0] for p in path]
+
         # Set self.waypoints
         self.waypoints = waypoints
         # TODO: send waypoints to sim (this is just for visualization of waypoints)
