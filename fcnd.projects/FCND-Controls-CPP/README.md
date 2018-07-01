@@ -6,7 +6,7 @@ V3F w = kpPQR * (pqrCmd - pqr);
 momentCmd = I * w;
 ```
 
-* We feed the moment and collective thrust to `GenerateMotorCommands` to calculate necessary individual motor thrust to produce the inputs.
+* We feed the moment and collective thrust to `GenerateMotorCommands` to calculate individual motor thrusts necessary to produce the inputs.
 
 ```
 f_total = f1 + f2 + f3 + f4
@@ -17,9 +17,9 @@ tau_z = (-f1 + f2 - f3 -f4) * kappa
 
 We use these 4 equations to solve for 4 variable f1, f2, f3, f4
 
-* The `RollPitchCotrol` takes necessary x, y acceleration in world frame along with current attitude and thrust to calculate control knobs which inturn calculates necessary body rates to produce input acceleration
+* The `RollPitchCotrol` takes necessary x, y acceleration in world frame along with current attitude and thrust to calculate `control knobs` (b_x and b_y)   using which we calculate necessary rates in body frame to produce input acceleration
 
-* `LateralPositionControl` caculates the accelerations necessary for commanded positions in world frame. It is pd controller with feed forward component. feedforward controller helps in maintaining fast response to changing trajectory while d controllers helps with the overshoots
+* `LateralPositionControl` caculates the accelerations necessary for commanded positions in world frame. It is a pd controller with feed forward component. feedforward controller helps in maintaining fast response to changing trajectory while d controllers helps with the overshoots
 
 ```
 accelCmd = kpPosXY * posErr + kpVelXY * velErr + accelCmd;
