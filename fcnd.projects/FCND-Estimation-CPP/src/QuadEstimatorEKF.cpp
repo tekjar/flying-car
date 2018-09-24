@@ -177,7 +177,7 @@ VectorXf QuadEstimatorEKF::PredictState(VectorXf curState, float dt, V3F accel, 
     
     predictedState(3) = curState(3) + dt * accelerationWorld.x;
     predictedState(4) = curState(4) + dt * accelerationWorld.y;
-    predictedState(5) = curState(5) + dt * accelerationWorld.y;
+    predictedState(5) = curState(5) + dt * accelerationWorld.z;
     predictedState(5) -= CONST_GRAVITY * dt; // consider acceleration due to gravity
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
