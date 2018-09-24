@@ -168,7 +168,17 @@ VectorXf QuadEstimatorEKF::PredictState(VectorXf curState, float dt, V3F accel, 
   Quaternion<float> attitude = Quaternion<float>::FromEuler123_RPY(rollEst, pitchEst, curState(6));
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
-
+    // Get accelerations in world frame
+    V3F accelerationWorld= attitude.Rotate_BtoI(accel);
+    
+    predictedState(0) = curState(0) + dt * curState(3);
+    predictedState(1) = curState(1) + dt * curState(4);
+    predictedState(2) = curState(2) + dt * curState(5);
+    
+    predictedState(3) = curState(3) + dt * accelerationWorld.x;
+    predictedState(4) = curState(4) + dt * accelerationWorld.y;
+    predictedState(5) = curState(5) + dt * accelerationWorld.y;
+    predictedState(5) -= CONST_GRAVITY * dt; // consider acceleration due to gravity
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
