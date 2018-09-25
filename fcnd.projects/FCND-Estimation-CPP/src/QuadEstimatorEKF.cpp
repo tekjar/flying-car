@@ -265,8 +265,18 @@ void QuadEstimatorEKF::Predict(float dt, V3F accel, V3F gyro)
   gPrime.setIdentity();
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
-
-
+    // update the jacobian matrix as per equation 51
+    gPrime(0, 3) = dt;
+    gPrime(1, 4) = dt;
+    gPrime(2, 5) = dt;
+    
+    // get the dot product as described in the class
+    gPrime(3, 6) = (RbgPrime(0) * accel).sum() * dt;
+    gPrime(4, 6) = (RbgPrime(1) * accel).sum() * dt;
+    gPrime(5, 6) = (RbgPrime(2) * accel).sum() * dt;
+    
+    // update the covariance matrix as per the pseudo code
+    ekfCov = gPrime * (ekfCov * gPrime.transpose()) + Q;
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
   ekfState = newState;
