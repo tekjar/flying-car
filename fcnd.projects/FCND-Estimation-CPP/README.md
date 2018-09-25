@@ -1,6 +1,6 @@
 ### WRITE UP
 
-####1. Calculating Standard Deviation of Sensor Data
+#### 1. Calculating Standard Deviation of Sensor Data
 
 [This Code](https://github.com/tekjar/flying-car/blob/master/fcnd.projects/FCND-Estimation-CPP/stddev/stddev.py) calculates standard deviation of sensor data. 
 
@@ -8,14 +8,14 @@ NOTE: Allow simulator to run close to 10 seconds
 
 ![image](outputs/stddev.png)
 
-####2. Better Attitude Estimation
+#### 2. Better Attitude Estimation
 
 Here I just used the provided `Quaternion<float>::FromEuler123_RPY` method to generate quaternions from roll, pitch and yaw and associated `IntegrateBodyRate` method
 
 ![image](outputs/attitude.png)
 
 
-####3. Predict
+#### 3. Predict
 
 This scenario contains a series of steps from the [paper](https://www.overleaf.com/read/vymfngphcccj#/54894644/)
 
@@ -26,14 +26,14 @@ This scenario contains a series of steps from the [paper](https://www.overleaf.c
 
 ![image](outputs/predict.png)
 
-####4. Magnetometer Update
+#### 4. Magnetometer Update
 
 * Use equation 58 to calculate H'
 * Normalise measurement (or) prediction from state at boundaries
 
 ![image](outputs/mag.png)
 
-####5 & 6 Closed Loop + GPS Update + Controller
+#### 5 & 6 Closed Loop + GPS Update + Controller
 
 * Implement section 7.3.1 from the doc
 
