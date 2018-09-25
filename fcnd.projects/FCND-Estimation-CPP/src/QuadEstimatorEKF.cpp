@@ -205,7 +205,21 @@ MatrixXf QuadEstimatorEKF::GetRbgPrime(float roll, float pitch, float yaw)
   //   that your calculations are reasonable
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
-
+  // Rbg prime for jacobian (linearization)
+    float cosTheta = cos(pitch);
+    float sinTheta = sin(pitch);
+    float cosPhi = cos(roll);
+    float sinPhi = sin(roll);
+    float cosPsi = cos(yaw);
+    float sinPsi = sin(yaw);
+    
+    // Equation 52 from the doc
+    RbgPrime(0, 0) = - cosTheta * sinPsi;
+    RbgPrime(0,1) = - sinPhi  * sinTheta * sinPsi - cosTheta * cosPsi;
+    RbgPrime(0,2) = - cosPhi  * sinTheta * sinPsi + sinPhi   * cosPsi;
+    RbgPrime(1,0) = cosTheta * cosPsi;
+    RbgPrime(1,1) = sinPhi  * sinTheta * cosPsi - cosPhi * sinPsi;
+    RbgPrime(1,2) = cosPhi  * sinTheta * cosPsi + sinPhi * sinPsi;
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
